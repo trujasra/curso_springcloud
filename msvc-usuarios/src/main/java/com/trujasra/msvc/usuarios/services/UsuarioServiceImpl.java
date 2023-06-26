@@ -1,5 +1,6 @@
 package com.trujasra.msvc.usuarios.services;
 
+import com.trujasra.msvc.usuarios.clients.CursoClienteRest;
 import com.trujasra.msvc.usuarios.models.entity.Usuario;
 import com.trujasra.msvc.usuarios.repositories.UsuarioRepository;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioRepository repository;
+    private CursoClienteRest cliente;
 
     @Override
     @Transactional(readOnly = true)
@@ -36,5 +38,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void eliminar(Long id) {
         repository.deleteById(id);
+        cliente.eliminarCursoUsuarioPorId(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Usuario> listarPorIds(Iterable<Long> ids) {
+        return (List<Usuario>) repository.findAllById(ids);
+    }
+
+    @Override
+    public Optional<Usuario> porEmail(String email) {
+        return repository.porEmail(email);
+    }
+
+    @Override
+    public boolean existePorEmail(String email) {
+        return repository.existsByEmail(email);
     }
 }
